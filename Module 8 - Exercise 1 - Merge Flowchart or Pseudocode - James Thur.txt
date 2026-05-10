@@ -1,0 +1,43 @@
+
+// initialization
+DECLARE geraldRecord
+DECLARE geraldineRecord
+
+// open files
+OPEN "Geralds Businesses.csv" AS geraldFile
+OPEN "Geraldines Businesses.csv" AS geraldineFile
+OPEN "MergedCustomers.csv" AS mergedFile
+
+// get first records
+READ geraldFile INTO geraldRecord
+READ geraldineFile INTO geraldineRecord
+
+// process data - merge files
+WHILE NOT EOF(geraldFile) AND NOT EOF(geraldineFile)
+
+    IF geraldRecord < geraldineRecord THEN
+        WRITE geraldRecord TO mergedFile
+        READ geraldFile INTO geraldRecord
+    ELSE
+        WRITE geraldineRecord TO mergedFile
+        READ geraldineFile INTO geraldineRecord
+    ENDIF
+
+ENDWHILE
+
+// add remaining records from Gerald's file
+WHILE NOT EOF(geraldFile)
+    WRITE geraldRecord TO mergedFile
+    READ geraldFile INTO geraldRecord
+ENDWHILE
+
+// add remaining records from Geraldine's file
+WHILE NOT EOF(geraldineFile)
+    WRITE geraldineRecord TO mergedFile
+    READ geraldineFile INTO geraldineRecord
+ENDWHILE
+
+// close files
+CLOSE geraldFile
+CLOSE geraldineFile
+CLOSE mergedFile
